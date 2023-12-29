@@ -14,7 +14,7 @@ output_filename = 'output.csv'
 
 
 # Класс детерминированного конечного автомата
-class FiniteAutomaton:
+class DeterministicFiniteAutomaton:
     def __init__(self):
         # Множество состояний
         self.Q = set()
@@ -74,8 +74,6 @@ class FiniteAutomaton:
         while True:
             # Новое разбиение
             new_equivalence_classes = []
-            # Все возможные цепочки символов текущей длины
-            chains = [p for p in itertools.product(self.Sigma, repeat=current_chain_length)]
             # Каждый класс будем пытаться разбить
             for eq_cl in equivalence_classes:
                 # Ключ: строка из классов, в которые попадаем из какого-то состояния по всем цепочкам
@@ -85,8 +83,8 @@ class FiniteAutomaton:
                 for state in eq_cl:
                     # Cтрока из классов, в которые попадаем из текущего состояния по всем цепочкам
                     classes = ''
-                    # Последовательно перебираем все цепочки
-                    for chain in chains:
+                    # Последовательно перебираем все цепочки текущей длины
+                    for chain in itertools.product(self.Sigma, repeat=current_chain_length):
                         current_state = state
                         # Переходим в следующее состояние по символу
                         for c in chain:
@@ -191,7 +189,7 @@ class FiniteAutomaton:
 
 
 if __name__ == '__main__':
-    finite_automaton = FiniteAutomaton()
+    finite_automaton = DeterministicFiniteAutomaton()
     finite_automaton.load_transition_function(input_filename)
     finite_automaton.minimize()
     finite_automaton.write_into_file(output_filename)
