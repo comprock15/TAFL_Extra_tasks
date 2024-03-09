@@ -61,18 +61,21 @@ class NondeterministicFiniteAutomaton:
 
     # Удалить недостижимые состояния
     def remove_unreachable_states(self):
-        old_Q = set()
-        new_Q = {self.q0}
+        new_Q = set()
+        new_reachable_states = {self.q0}
         # Продолжаем, пока множество достижимых состояний не перестанет изменяться
-        while old_Q != new_Q:
-            old_Q = new_Q.copy()
-            # Рассматриваем все состояния, которые возможно достигнуть
-            for state in old_Q:
+        while new_reachable_states != set():
+            new_Q.update(new_reachable_states)
+            added_states = new_reachable_states
+            new_reachable_states = set()
+            # Рассматриваем все состояния, которых достигли на предыдущем шаге
+            for state in added_states:
                 # Для всех символов
                 for c in self.Sigma:
                     # Добавляем новые достигнутые состояния
                     for q in self.delta[(state, c)]:
-                        new_Q.add(q)
+                        if q not in new_Q:
+                            new_reachable_states.add(q)
 
         # Обновление состояний
         self.Q = new_Q
@@ -119,6 +122,7 @@ class NondeterministicFiniteAutomaton:
         with open(filename, 'w', newline='\n') as f:
             writer_obj = csv.writer(f, delimiter=';')
             writer_obj.writerows(table)
+
 
 if __name__ == '__main__':
     finite_automaton = NondeterministicFiniteAutomaton()
